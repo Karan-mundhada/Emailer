@@ -7,34 +7,67 @@ from email.mime.multipart import MIMEMultipart
 app = Flask(__name__)
 CORS(app)
 
+# Replace with your email and password
+email = 'karanmundhada@gmail.com'
+password = 'srfu nrbv vfid zfui'
+
 @app.route('/send-emails', methods=['POST'])
 def send_emails():
     data = request.get_json()
-    # print(data)
+    print(data)
     to = data['to']
+    emadd = to.split(",")
+    # print(emadd)
     subject = data['subject']
     message = data['message']
 
-    # Replace with your email and password
-    email = 'karanmundhada@gmail.com'
-    password = 'srfu nrbv vfid zfui'
+    for too in emadd:
+        msg = MIMEMultipart()
+        msg['From'] = email
+        msg['To'] = too
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
 
-    msg = MIMEMultipart()
-    msg['From'] = email
-    msg['To'] = to
-    msg['Subject'] = subject
-    msg.attach(MIMEText(message, 'plain'))
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(email, password)
+            server.sendmail(email, too, msg.as_string())
+            server.quit()
+        except Exception as e:
+            print('Error:', e)
+            return jsonify({'message': 'Failed to send emails'}), 500
 
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(email, password)
-        server.sendmail(email, to, msg.as_string())
-        server.quit()
-        return jsonify({'message': 'Emails sent successfully!'})
-    except Exception as e:
-        print('Error:', e)
-        return jsonify({'message': 'Failed to send emails'}), 500
+    return jsonify({'message': 'Emails sent successfully!'})
+
+@app.route('/upload-csv', methods=['POST'])
+def uploadCSV():
+    data = request.get_json()
+    print(data)
+    to = data['to']
+    emadd = to
+    # print(emadd)
+    subject = data['subject']
+    message = data['message']
+
+    for too in emadd:
+        msg = MIMEMultipart()
+        msg['From'] = email
+        msg['To'] = too
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
+
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(email, password)
+            server.sendmail(email, too, msg.as_string())
+            server.quit()
+        except Exception as e:
+            print('Error:', e)
+            return jsonify({'message': 'Failed to send emails'}), 500
+
+    return jsonify({'message': 'Emails sent successfully!'})
 
 if __name__ == '__main__':
     app.run(debug=True)
