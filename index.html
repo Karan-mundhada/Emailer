@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Sender</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Email Sender</h1>
+    <form id="emailForm">
+      <label for="to">To:</label>
+      <input
+        type="text"
+        id="to"
+        name="to"
+        placeholder="Enter email addresses (comma-separated)"
+        required
+      />
+
+      <label for="subject">Subject:</label>
+      <input
+        type="text"
+        id="subject"
+        name="subject"
+        placeholder="Enter email subject"
+        required
+      />
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" rows="4" required></textarea>
+
+      <input type="submit" value="Send Emails" />
+    </form>
+
+    <script>
+      // Function to handle form submission
+      function handleFormSubmit(event) {
+        event.preventDefault(); // Prevent the default form submission
+        const to = document.getElementById("to").value;
+        const subject = document.getElementById("subject").value;
+        const message = document.getElementById("message").value;
+        const data = {
+          to: to,
+          subject: subject,
+          message: message,
+        };
+        // Send the data to the server (replace 'http://your-backend-url:port/send-emails' with the actual URL)
+        fetch("http://127.0.0.1:5000/send-emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Emails sent successfully!");
+            } else {
+              alert("Failed to send emails. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+      // Attach the form submission handler
+      const form = document.getElementById("emailForm");
+      form.addEventListener("submit", handleFormSubmit);
+    </script>
+  </body>
+</html>
