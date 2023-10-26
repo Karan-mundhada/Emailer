@@ -5,10 +5,12 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Email Sender</h1>
+    <h1>Emailer</h1>
 
-    <button onclick="mail(0)">Simple Email</button>
-    <button onclick="mail(1)">Mass email</button>
+    <div>
+      <button class="simple" onclick="mail(0)">Simple Email</button>
+      <button class="mass" onclick="mail(1)">Mass email</button>
+    </div>
 
     <form id="emailForm">
       <label for="to">To:</label>
@@ -30,7 +32,13 @@
       />
 
       <label for="message">Message:</label>
-      <textarea id="message" name="message" rows="4" required></textarea>
+      <textarea
+        id="message"
+        name="message"
+        rows="4"
+        placeholder="Your mom is fat"
+        required
+      ></textarea>
 
       <input type="submit" value="Send Emails" />
     </form>
@@ -49,7 +57,14 @@
       />
 
       <label for="message">Message:</label>
-      <textarea id="CSVmessage" name="message" rows="4" required></textarea>
+      <textarea
+        type="text"
+        id="CSVmessage"
+        name="message"
+        rows="4"
+        placeholder="Your mom is fat"
+        required
+      ></textarea>
 
       <input type="submit" value="Send Emails" />
     </form>
@@ -94,7 +109,7 @@
         } else {
           const fileInput = document.getElementById("csvFile");
           const selectedFile = fileInput.files[0];
-          
+
           if (!selectedFile) {
             alert("Please select a CSV file.");
             return;
@@ -103,7 +118,7 @@
           const reader = new FileReader();
           const emailAddresses = [];
 
-          reader.onload = function (event) {
+          reader.onload = async function (event) {
             const csvData = event.target.result;
             const lines = csvData.split("\n");
             const headers = lines[0].split(",");
@@ -126,34 +141,35 @@
             }
             // Now you have the email addresses in the "Email" column
             console.log(emailAddresses);
+            const subject = document.getElementById("CSVsubject").value;
+            const message = document.getElementById("CSVmessage").value;
+            const data = {
+              to: emailAddresses,
+              subject: subject,
+              message: message,
+            };
+            console.log(data);
+            // Send the data to the server (replace 'http://your-backend-url:port/send-emails' with the actual URL)
+            fetch("http://127.0.0.1:5000/upload-csv", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => {
+                if (response.ok) {
+                  alert("Emails sent successfully!");
+                } else {
+                  alert("Failed to send emails. Please try again.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
           };
 
           reader.readAsText(selectedFile);
-          const subject = document.getElementById("subject").value;
-          const message = document.getElementById("message").value;
-          const data = {
-            to: emailAddresses,
-            subject: subject,
-            message: message,
-          };
-          // Send the data to the server (replace 'http://your-backend-url:port/send-emails' with the actual URL)
-          fetch("http://127.0.0.1:5000/upload-csv", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          })
-            .then((response) => {
-              if (response.ok) {
-                alert("Emails sent successfully!");
-              } else {
-                alert("Failed to send emails. Please try again.");
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
         }
       }
 
