@@ -16,8 +16,8 @@ def send_emails():
     message = data['message']
 
     # Replace with your email and password
-    email = 'karanmundhada@gmail.com'
-    password = 'srfu nrbv vfid zfui'
+    email = 'example@gmail.com'
+    password = 'srfu rwed vfid gftr' # generated code from email
 
     msg = MIMEMultipart()
     msg['From'] = email
