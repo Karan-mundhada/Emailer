@@ -8,8 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Replace with your email and password
-email = 'karanmundhada@gmail.com'
-password = 'srfu nrbv vfid zfui'
+email = 'Example@gmail.com'
+password = 'srfu nwbv vfid zfui'
 
 @app.route('/send-emails', methods=['POST'])
 def send_emails():
