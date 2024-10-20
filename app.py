@@ -21,7 +21,7 @@ def send_emails():
 
     msg = MIMEMultipart()
     msg['From'] = email
-    msg['To'] = to
+    msg['Bcc'] = to
     msg['Subject'] = subject
     msg.attach(MIMEText(message, 'plain'))
 
@@ -29,7 +29,7 @@ def send_emails():
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(email, password)
-        server.sendmail(email, to, msg.as_string())
+        server.sendmail(email, list(to.split(',')), msg.as_string())
         server.quit()
         return jsonify({'message': 'Emails sent successfully!'})
     except Exception as e:
